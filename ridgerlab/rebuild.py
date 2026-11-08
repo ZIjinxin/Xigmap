@@ -8,7 +8,7 @@ from io import BytesIO
 from pathlib import Path, PurePosixPath
 SOURCE = Path(__file__).resolve().parent.parent
 OFFICIAL = 'efcd57cc4feb9a1fdf7b5130c6de81066617d979f941c207c65302dda76d71fd901bf21eb7e3034b8cb2317876c5a3510f465f5b17366e3c7c1ae8ed4befcd17'
-WEB = ('www/login.php','www/index.php','www/favicon.ico','www/images/login_logo.png')
+WEB = ('www/login.php','www/index.php','www/favicon.ico','www/images/login_logo.png','www/css/storage-map.css')
 def stage(archive):
     import polib
     po = polib.pofile(str(SOURCE/'locale/xigmanas-zh_CN.po'),encoding='utf-8')
@@ -51,7 +51,7 @@ def image(tree,output,tool):
         target=Path(scratch)/'ridger.iso'
         # A relative output path also works with the Windows Cygwin build.
         argv=[tool,'-quiet','-r','-J','-V','XigmaNAS-x64-LiveCD-14.3.0.5',
-              '-A','Xigmap 1.1.0','-c','boot.catalog','-b','boot/cdboot',
+              '-A','Xigmap 1.2.0','-c','boot.catalog','-b','boot/cdboot',
               '-no-emul-boot','-boot-load-size','4','-eltorito-alt-boot',
               '-b','boot/efiboot.img','-no-emul-boot','-o',
               os.path.relpath(target,tree).replace(os.sep,'/'),'.']
@@ -80,7 +80,7 @@ def image(tree,output,tool):
         target.replace(output)
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='action',required=True)
-    a=sub.add_parser('stage',help='compile the translation catalogue and archive the 5 changed runtime files')
+    a=sub.add_parser('stage',help='compile the translation catalogue and archive the web assets and translation catalogue')
     a.add_argument('overlay',type=Path)
     a=sub.add_parser('stage-root',help='archive the SMB grid and storage diagnostics for mfsroot.gz')
     a.add_argument('overlay',type=Path)

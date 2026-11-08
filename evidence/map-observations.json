@@ -1,0 +1,49 @@
+{
+  "release": "v1.2.0",
+  "iso_sha256": "21744c591e3b6cd4fe28ed41d789123c7357d880b265ad94524a70855ebed508",
+  "independent_blank_install": {
+    "platform": "x64-full",
+    "system_partition": "da0p2",
+    "source": "blank 12 GiB disk; Full GPT installer; ISO detached for disk boot",
+    "verified_files": {
+      "/etc/inc/services/samba/share/grid_toolbox.php": "4d183d91c7c03a80c0fcfb42d8baa6e55bad62560e9c7381372e387a10504931",
+      "/etc/inc/services/samba/share/storage_check.php": "880eb79c12f29c33a998583d0452691be295ede43ac0dfa7dbb07e9d32dbb767",
+      "/usr/local/www/login.php": "65d65f39c2ff85fa1ab4db69ad3f3733e55c6d8d0fbb50a9b0b3187e0578c10b",
+      "/usr/local/www/index.php": "d88efb7105e18e12c64145aaea5838d8143dc78669e84e73ccce5f24f8e690e0",
+      "/usr/local/www/favicon.ico": "d0a7e012132b2ea116f0b039e0a53250e1f57ad846cafb051307c655412d7dcc",
+      "/usr/local/www/images/login_logo.png": "20380ceff1bb5d89e5c1b4a8415c6117ff6cee17a5c743334ce895653e584509",
+      "/usr/local/www/css/storage-map.css": "c1dccb9784d2f99597c40b55b8fc683fb185c8755f2bc98c9f85a005f7fe0a1c",
+      "/usr/local/share/locale/zh_CN/LC_MESSAGES/xigmanas.mo": "f39e0278cdac9372514013cc08e21c16eea13428cf60e42684d6f78bb2c0159a"
+    }
+  },
+  "share_map_on_demo_vm": {
+    "healthy": {
+      "configured_mount": "/mnt/sharecheck-lab",
+      "live_mount": "/mnt/sharecheck-lab",
+      "live_source": "/dev/ufsid/6af0ca17b3515b38 (ufs)",
+      "status": "Verified",
+      "file_st_dev": "98",
+      "root_st_dev": "101",
+      "sha256": "aec1d849f7525a0c761362a45c2f3f8e1dae24ba486f1942debf9232d33dafa6"
+    },
+    "fault": {
+      "configured_mount": "/mnt/sharecheck-lab",
+      "live_mount": "/",
+      "live_source": "/dev/ufsid/6af0c9534d1da3b7 (ufs)",
+      "status": "Volume not mounted",
+      "file_st_dev": "101",
+      "root_st_dev": "101",
+      "sha256": "1fd6999156346b9c78713fd80441725c2ce1efc5edcfc26254fb725946198a49"
+    },
+    "restored": {
+      "configured_mount": "/mnt/sharecheck-lab",
+      "live_mount": "/mnt/sharecheck-lab",
+      "live_source": "/dev/ufsid/6af0ca17b3515b38 (ufs)",
+      "status": "Verified",
+      "file_st_dev": "98",
+      "root_st_dev": "101",
+      "sha256": "1d7cce71b1f9fbfe54736be2e2427e11e0c3111afd2ef35458ced3f52977f4f5"
+    }
+  },
+  "checks": "14 PHP regression checks; keyboard expand/collapse; narrow viewport; Windows SMB write/read at each step. The disposable fault marker was removed after capture. The baseline is in observations.json."
+}

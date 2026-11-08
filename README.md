@@ -1,6 +1,20 @@
 # Xigmap
 
-**Where is this SMB share actually writing?** Xigmap adds a read-only **Storage check** column to the XigmaNAS **Services → SMB → Shares** page. The name joins *Xigma* and *map*. It is an independent derivative of XigmaNAS 14.3.0.5.10566.
+**Where is this SMB share actually writing?** Xigmap adds a read-only **share storage map** and **Storage check** column to the XigmaNAS **Services → SMB → Shares** page. The name joins *Xigma* and *map*. It is an independent derivative of XigmaNAS 14.3.0.5.10566.
+
+## Follow a share from its directory to each volume
+
+Open **Services → SMB → Shares → Share storage map**. Expand a share by name. The left node is its configured directory. The upper branch identifies the configured mount and device. The lower branch shows the live mount, filesystem type and provider observed by FreeBSD. When the share directory is missing, the map labels the nearest existing path. Unmanaged volumes can still show an observed location. Identity verification applies to configured UFS volumes.
+
+**Healthy test volume**
+
+![Both branches lead to the disposable UFS volume](evidence/map-healthy.png)
+
+**Same share after the test volume was detached**
+
+![Configured volume stays the same while the live branch moves to root](evidence/map-fault.png)
+
+The status column and the diagram use the same mount observation. Refresh the page after changing a mount. See the [measurements and blank-disk installation record](evidence/map-observations.json), [recovery screenshot](evidence/map-restored.png) and [v1.2.0 installer](https://github.com/ZIjinxin/Xigmap/releases/tag/v1.2.0).
 
 ## A write can succeed on the wrong disk
 

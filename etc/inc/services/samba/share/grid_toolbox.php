@@ -105,6 +105,44 @@ class grid_toolbox extends myt\grid_toolbox {
 		return $cop;
 	}
 /**
+ *	Add an expandable share route. All configuration and mount values are text nodes.
+ */
+	private static function add_storage_route($map,string $name,string $path,array $route,string $status,bool $expand) {
+		$document = $map->ownerDocument;
+		$details = $map->addElement('details',['class' => 'storage-route']);
+		if($expand):
+			$details->setAttribute('open','open');
+		endif;
+		$summary = $details->addElement('summary');
+		$summary->addElement('strong')->appendChild($document->createTextNode($name));
+		$state = ($status === gettext('Verified')) ? 'verified' : (($status === gettext('Unverified')) ? 'unknown' : 'warning');
+		$summary->addElement('span',['class' => 'route-status ' . $state])->appendChild($document->createTextNode($status));
+		$flow = $details->addElement('div',['class' => 'route-flow']);
+		$origin = $flow->addElement('div',['class' => 'route-origin']);
+		$origin->insElement('small',[],gettext('Share directory'));
+		$origin->addElement('code')->appendChild($document->createTextNode($path));
+		if($route['resolved'] !== null && $route['resolved'] !== $path):
+			$origin->insElement('small',[],$route['directory'] ? gettext('Resolved directory') : gettext('Nearest existing path'));
+			$origin->addElement('code')->appendChild($document->createTextNode($route['resolved']));
+		endif;
+		$branches = $flow->addElement('div',['class' => 'route-branches']);
+		$configured = $branches->addElement('div',['class' => 'route-branch configured']);
+		$configured->insElement('small',[],gettext('Configured destination'));
+		$configured->addElement('code')->appendChild($document->createTextNode($route['expected_mount'] ?? gettext('No configured mount')));
+		if($route['expected_device'] !== ''):
+			$configured->addElement('span')->appendChild($document->createTextNode($route['expected_device']));
+		endif;
+		$live = $branches->addElement('div',['class' => 'route-branch live ' . $state]);
+		$live->insElement('small',[],($route['directory'] === false) ? gettext('Filesystem of existing path') : gettext('Live destination'));
+		$live->addElement('code')->appendChild($document->createTextNode($route['actual_mount'] ?? gettext('Unknown')));
+		if($route['source'] !== null):
+			$live->addElement('span')->appendChild($document->createTextNode($route['source'] . ' (' . $route['type'] . ')'));
+			if($route['identity'] !== null && $route['source'] !== '/dev/ufsid/' . $route['identity']):
+				$live->addElement('span')->appendChild($document->createTextNode('/dev/ufsid/' . $route['identity']));
+			endif;
+		endif;
+	}
+/**
  *	Render the page
  *	@global array $input_errors
  *	@global string $errormsg
@@ -176,6 +214,9 @@ class grid_toolbox extends myt\grid_toolbox {
 				insTHwC('lhebl',$cop->get_toolbox()->get_title());
 		endif;
 		if($record_exists):
+			$document->getElementsByTagName('head')->item(0)->insElement('link',['href' => '/css/storage-map.css','rel' => 'stylesheet']);
+			$map = $content->addElement('section',['id' => 'storage-map','aria-labelledby' => 'storage-map-heading']);
+			$map->insElement('h2',['id' => 'storage-map-heading'],gettext('Share storage map'));
 			foreach($sphere->grid as $sphere->row_id => $sphere->row):
 				$notificationmode = updatenotify_get_mode($sphere->get_notifier(),$sphere->get_row_identifier_value());
 				$is_notdirty = (UPDATENOTIFY_MODE_DIRTY != $notificationmode) && (UPDATENOTIFY_MODE_DIRTY_CONFIG != $notificationmode);
@@ -193,7 +234,11 @@ class grid_toolbox extends myt\grid_toolbox {
 						insTDwC('lcell' . $dc,$sphere->row[$cop->get_comment()->get_name()] ?? '')->
 						insTDwC('lcell' . $dc,isset($sphere->row[$cop->get_browseable()->get_name()]) ? gettext('yes') : gettext('no'))->
 						insTDwC('lcell' . $dc,isset($sphere->row[$cop->get_guest()->get_name()]) ? gettext('yes') : gettext('no'));
-				[$status, $detail] = $storage->inspect((string)($sphere->row[$cop->get_path()->get_name()] ?? ''));
+				$path = (string)($sphere->row[$cop->get_path()->get_name()] ?? '');
+				$name = (string)($sphere->row[$cop->get_name()->get_name()] ?? '');
+				$route = $storage->trace($path);
+				[$status,$detail] = $storage->diagnose($route);
+				self::add_storage_route($map,$name,$path,$route,$status,count($sphere->grid) <= 2);
 				$cell = $tr->addTDwC('lcell' . $dc);
 				$cell->addElement('strong')->appendChild($document->createTextNode($status));
 				$cell->addDIV()->appendChild($document->createTextNode($detail));

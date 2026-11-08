@@ -1,0 +1,72 @@
+/* SMB share routes in the XigmaNAS light and dark themes. */
+#storage-map {
+	margin: 1.25em 0 .5em;
+}
+#storage-map h2 {
+	margin: 0 0 .55em;
+	line-height: 1.4;
+	font-family: inherit;
+	font-size: 1.15em;
+}
+.storage-route {
+	border-top: 1px solid #8999a9;
+}
+.storage-route summary {
+	padding: .7em .35em;
+	cursor: pointer;
+}
+.route-status {
+	margin-inline-start: 1em;
+	border: 1px solid currentColor;
+	border-radius: .3em;
+	padding: .13em .5em;
+	font-size: .93em;
+}
+.route-status.verified { border-inline-start: .35em solid #34836e; }
+.route-status.warning { border-inline-start: .35em solid #b9781e; }
+.route-flow {
+	display: grid;
+	grid-template-columns: minmax(12em, .8fr) minmax(18em, 1.2fr);
+	align-items: center;
+	max-width: 74em;
+	padding: .45em 1em 1.1em;
+	font-size: 1.08em;
+}
+.route-origin, .route-branch {
+	position: relative;
+	min-width: 0;
+	border: 1px solid #8999a9;
+	border-radius: .3em;
+	padding: .65em .95em;
+	overflow-wrap: anywhere;
+}
+.route-flow small, .route-flow code, .route-branch span {
+	display: block;
+	line-height: 1.45;
+}
+.route-flow small { line-height: 1.5; font-family: inherit; font-weight: bold; margin-bottom: .2em; }
+.route-flow code { font: 1em/1.45 monospace; }
+.route-flow code + small { margin-top: .4em; }
+.route-branches {
+	display: grid;
+	gap: .65em;
+	padding-inline-start: 3em;
+}
+.route-origin::after, .route-branch::before, .route-branch::after {
+	content: "";
+	position: absolute;
+	pointer-events: none;
+}
+.route-origin::after { top: 50%; left: 100%; width: 1.5em; border-top: 1px solid #8999a9; }
+.route-branch::before { top: 50%; right: 100%; width: 1.5em; border-top: 1px solid #8999a9; }
+.route-branch::after { right: calc(100% + 1.5em); border-left: 1px solid #8999a9; }
+.route-branch.configured::after { top: 50%; bottom: -.7em; }
+.route-branch.live::after { top: -.7em; bottom: 50%; }
+.route-branch.live.verified { border-inline-end: .35em solid #34836e; }
+.route-branch.live.warning { border-inline-end: .35em solid #b9781e; }
+@media (max-width: 700px) {
+	.route-flow { grid-template-columns: minmax(0, 1fr); gap: .7em; padding-inline: .4em; }
+	.route-origin::after { top: 100%; left: 1em; width: 0; height: .75em; border: 0; border-left: 1px solid #8999a9; }
+	.route-branches { padding-inline-start: 2.5em; }
+	.route-branch.configured::after { top: -.75em; }
+}

@@ -68,50 +68,71 @@ final class storage_check {
 		return $this->identities[$source];
 	}
 
-	/** Return separate plain-text fields; the view inserts them as DOM text nodes. */
-	public function inspect(string $path): array {
-		if (!$this->available || !isset($this->mounted['/']) || !str_starts_with($path, '/') ||
-			str_contains($path, '%') || preg_match('~(?:^|/)\.\.(?:/|$)~', $path)) {
-			return [gettext('Unverified'), gettext('Mount information or a static absolute path is unavailable.')];
+	/** Capture the two destinations once; both the status cell and the map use this observation. */
+	public function trace(string $path): array {
+		$route = ['expected_mount' => null, 'expected_device' => '', 'actual_mount' => null,
+			'source' => null, 'type' => null, 'identity' => null, 'resolved' => null, 'directory' => null];
+		if (!str_starts_with($path, '/') || str_contains($path, '%') || preg_match('~(?:^|/)\.\.(?:/|$)~', $path)) {
+			return $route;
 		}
-		$path = preg_replace('~/+~', '/', $path);
-		$path = rtrim($path, '/') ?: '/';
+		$path = rtrim(preg_replace('~/+~', '/', $path), '/') ?: '/';
 		$expected = self::ancestor($path, $this->expected);
+		$route['expected_mount'] = $expected;
+		$route['expected_device'] = $this->expected[$expected ?? ''] ?? '';
+		if (!$this->available || !isset($this->mounted['/'])) {
+			return $route;
+		}
 		$resolved = realpath($path);
-		$exists = $resolved !== false && is_dir($resolved);
-		// Missing children inherit the observed location of the nearest accessible parent.
-		$parent = $path;
-		while ($resolved === false && $parent !== '/') {
-			$parent = dirname($parent);
-			$resolved = realpath($parent);
+		$route['directory'] = $resolved !== false && is_dir($resolved);
+		// For an absent share, identify only the filesystem of its nearest existing parent.
+		while ($resolved === false && $path !== '/') {
+			$path = dirname($path);
+			$resolved = realpath($path);
 		}
-		$actual = $resolved === false ? null : self::ancestor($resolved, $this->mounted);
+		if ($resolved === false) {
+			return $route;
+		}
+		$route['resolved'] = $resolved;
+		$actual = self::ancestor($resolved, $this->mounted);
+		if ($actual !== null) {
+			$route['actual_mount'] = $actual;
+			[$route['source'], $route['type']] = $this->mounted[$actual];
+			if ($route['type'] === 'ufs' && $route['expected_device'] !== '') {
+				$route['identity'] = $this->ufs_id($route['source']);
+			}
+		}
+		return $route;
+	}
+
+	/** Report the status of a captured route without looking up the path a second time. */
+	public function diagnose(array $route): array {
+		$expected = $route['expected_mount'];
+		$actual = $route['actual_mount'];
 		if ($actual === null) {
-			return [gettext('Unverified'), gettext('The backing filesystem could not be resolved.')];
+			return [gettext('Unverified'), $route['directory'] === null ?
+				gettext('Mount information or a static absolute path is unavailable.') :
+				gettext('The backing filesystem could not be resolved.')];
 		}
-		[$source, $type] = $this->mounted[$actual];
-		$detail = sprintf(gettext('Actual: %s (%s) at %s'), $source, $type, $actual);
+		$source = $route['source'];
+		$detail = sprintf(gettext('Actual: %s (%s) at %s'), $source, $route['type'], $actual);
 		if ($expected !== null && $expected !== $actual) {
 			$detail .= ' · ' . sprintf(gettext('Expected: %s'), $expected);
-			if (!isset($this->mounted[$expected])) {
-				return [gettext('Volume not mounted'), $detail];
-			}
-			return [gettext('Different mount'), $detail];
+			return [isset($this->mounted[$expected]) ? gettext('Different mount') : gettext('Volume not mounted'), $detail];
 		}
-		if (!$exists) {
+		if (!$route['directory']) {
 			return [gettext('Directory missing'), $detail . ' · ' . gettext('Check path and traversal permissions.')];
 		}
-		$device = $this->expected[$expected ?? ''] ?? '';
-		if ($type !== 'ufs' || !preg_match('~^/dev/ufsid/([0-9a-f]{16})$~iD', $device, $match)) {
+		$device = $route['expected_device'];
+		if ($route['identity'] === null || !preg_match('~^/dev/ufsid/([0-9a-f]{16})$~iD', $device, $match)) {
 			return [gettext('Unverified'), $detail];
 		}
-		$id = $this->ufs_id($source);
-		if ($id === null) {
-			return [gettext('Unverified'), $detail];
-		}
-		if ($id !== strtolower($match[1])) {
+		if ($route['identity'] !== strtolower($match[1])) {
 			return [gettext('Volume mismatch'), $detail . ' · ' . sprintf(gettext('Expected: %s'), $device)];
 		}
 		return [gettext('Verified'), $detail . ($source === $device ? '' : ' · ' . $device)];
+	}
+
+	public function inspect(string $path): array {
+		return $this->diagnose($this->trace($path));
 	}
 }

@@ -15040,3 +15040,35 @@ msgstr "无法取得挂载信息或静态绝对路径。"
 #: etc/inc/services/samba/share/storage_check.php
 msgid "The backing filesystem could not be resolved."
 msgstr "无法确定实际文件系统。"
+
+#: etc/inc/services/samba/share/grid_toolbox.php
+msgid "Share storage map"
+msgstr "共享存储映射图"
+
+#: etc/inc/services/samba/share/grid_toolbox.php
+msgid "Share directory"
+msgstr "共享目录"
+
+#: etc/inc/services/samba/share/grid_toolbox.php
+msgid "Resolved directory"
+msgstr "解析后的目录"
+
+#: etc/inc/services/samba/share/grid_toolbox.php
+msgid "Nearest existing path"
+msgstr "最近的已存在路径"
+
+#: etc/inc/services/samba/share/grid_toolbox.php
+msgid "Configured destination"
+msgstr "配置的目标"
+
+#: etc/inc/services/samba/share/grid_toolbox.php
+msgid "No configured mount"
+msgstr "无已配置的挂载点"
+
+#: etc/inc/services/samba/share/grid_toolbox.php
+msgid "Live destination"
+msgstr "当前实际目标"
+
+#: etc/inc/services/samba/share/grid_toolbox.php
+msgid "Filesystem of existing path"
+msgstr "已存在路径所在的文件系统"

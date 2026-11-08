@@ -20,7 +20,7 @@ referred to below as $SOURCE. Run these commands from a separate build folder.
   mv custom-local.xz cdroot/mdlocal.xz
   mv custom-root.gz cdroot/mfsroot.gz
 
-  python3 "$SOURCE/ridgerlab/rebuild.py" image cdroot Xigmap-1.1.0-Full-r10566.iso
+  python3 "$SOURCE/ridgerlab/rebuild.py" image cdroot Xigmap-1.2.0-Full-r10566.iso
 
 For a split-host build, move the two original compressed payloads and the two
 tar overlays to FreeBSD. Return the two rebuilt payloads to cdroot before the

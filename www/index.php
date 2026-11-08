@@ -777,7 +777,7 @@ $(document).ready(function(){
 				html_textinfo2('vipstatus',gettext('Virtual IP address'),$sysinfo['vipstatus']);
 			endif;
 			html_textinfo2('hostname',gettext('Hostname'),$sysinfo['hostname']);
-			html_textinfo2('version',gettext('Version'),sprintf('<strong>%s %s</strong> (%s %s)',get_product_version(),get_product_versionname(),gettext('revision'),get_product_revision()) . ' &middot; Xigmap 1.1.0 / XigmaNAS Share Check');
+			html_textinfo2('version',gettext('Version'),sprintf('<strong>%s %s</strong> (%s %s)',get_product_version(),get_product_versionname(),gettext('revision'),get_product_revision()) . ' &middot; Xigmap 1.2.0 / SMB Storage Map');
 			html_textinfo2('builddate',gettext('Compiled'),$sysinfo['builddate']);
 			exec('/sbin/sysctl -n kern.version',$poskerndate);
 			html_textinfo2('platform_os',gettext('Platform OS'),sprintf('%s',$poskerndate[0]));

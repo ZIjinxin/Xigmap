@@ -26,7 +26,23 @@ try {
 	expect_status(new storage_check([], $base + [$point=>['pool/lab','zfs']]), $dir, 'Unverified');
 	$parsed = storage_check::parse_mounts(['pool/ds /mnt/a\\040b zfs rw 0 0']);
 	if (($parsed['/mnt/a b'][0] ?? null) !== 'pool/ds') throw new RuntimeException('Escaped mount path');
-	echo "10 checks passed\n";
+	$missing = $ok->trace("$dir/missing");
+	if ($missing['directory'] !== false || $missing['resolved'] !== $dir || $missing['actual_mount'] !== $point) {
+		throw new RuntimeException('An absent directory must identify the nearest existing path');
+	}
+	$fallback = (new storage_check([$point=>$good], $base))->trace($dir);
+	if ($fallback['expected_device'] !== $good || $fallback['actual_mount'] !== '/' || $fallback['source'] !== $bad) {
+		throw new RuntimeException('A missing volume must keep the configured and live routes separate');
+	}
+	$link = $ok->trace("$point/link");
+	if ($link['expected_mount'] !== $point || $link['resolved'] !== $other || $link['actual_mount'] !== '/') {
+		throw new RuntimeException('A symlink must retain its configured mount and resolve its live target');
+	}
+	$unknown = (new storage_check([$point=>$good], [], false))->trace($dir);
+	if ($unknown['expected_device'] !== $good || $unknown['actual_mount'] !== null) {
+		throw new RuntimeException('An unavailable mount table must not invent a live route');
+	}
+	echo "14 checks passed\n";
 } finally {
 	unlink("$point/link"); rmdir($dir); rmdir($point); rmdir($other); rmdir($root);
 }
