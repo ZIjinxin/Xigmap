@@ -14988,3 +14988,7 @@ msgstr "潜在活动"
 
 #~ msgid "SAMBA"
 #~ msgstr "SAMBA"
+
+#: www/login.php
+msgid "Sign in to RidgerLab"
+msgstr "登录 RidgerLab"
