@@ -115,11 +115,13 @@ class grid_toolbox extends myt\grid_toolbox {
 	public static function render(grid_properties $cop,mys\grid $sphere) {
 		global $input_errors;
 		global $errormsg;
-		global $savemsg;
+		global $savemsg, $config, $g;
 
+		$mounts = $config['mounts']['mount'] ?? [];
+		$storage = storage_check::capture(is_array($mounts) ? $mounts : [], $g['media_path']);
 		$record_exists = count($sphere->grid) > 0;
 		$use_tablesort = count($sphere->grid) > 1;
-		$a_col_width = ['5%','25%','20%','20%','10%','10%','10%'];
+		$a_col_width = ['4%','17%','12%','15%','8%','6%','29%','9%'];
 		$n_col_width = count($a_col_width);
 		if($use_tablesort):
 			$document = new_page($sphere->get_page_title(),$sphere->get_script()->get_scriptname(),'tablesort');
@@ -160,6 +162,7 @@ class grid_toolbox extends myt\grid_toolbox {
 				insTHwC('lhell',$cop->get_comment()->get_title())->
 				insTHwC('lhell',$cop->get_browseable()->get_title())->
 				insTHwC('lhell',$cop->get_guest()->get_title())->
+				insTHwC('lhell',gettext('Storage check'))->
 				insTHwC('lhebl sorter-false parser-false',$cop->get_toolbox()->get_title());
 		else:
 			$tr->
@@ -169,6 +172,7 @@ class grid_toolbox extends myt\grid_toolbox {
 				insTHwC('lhell',$cop->get_comment()->get_title())->
 				insTHwC('lhell',$cop->get_browseable()->get_title())->
 				insTHwC('lhell',$cop->get_guest()->get_title())->
+				insTHwC('lhell',gettext('Storage check'))->
 				insTHwC('lhebl',$cop->get_toolbox()->get_title());
 		endif;
 		if($record_exists):
@@ -178,8 +182,8 @@ class grid_toolbox extends myt\grid_toolbox {
 				$is_enabled = $sphere->is_enadis_enabled() ? (is_bool($test = $sphere->row[$cop->get_enable()->get_name()] ?? false) ? $test : true): true;
 				$is_notprotected = $sphere->is_lock_enabled() ? !(is_bool($test = $sphere->row[$cop->get_protected()->get_name()] ?? false) ? $test : true) : true;
 				$dc = $is_enabled ? '' : 'd';
-				$tbody->
-					addTR()->
+				$tr = $tbody->addTR();
+				$tr->
 						push()->
 						addTDwC('lcelc' . $dc)->
 							ins_cbm_checkbox($sphere,!($is_notdirty && $is_notprotected))->
@@ -188,7 +192,12 @@ class grid_toolbox extends myt\grid_toolbox {
 						insTDwC('lcell' . $dc,$sphere->row[$cop->get_name()->get_name()] ?? '')->
 						insTDwC('lcell' . $dc,$sphere->row[$cop->get_comment()->get_name()] ?? '')->
 						insTDwC('lcell' . $dc,isset($sphere->row[$cop->get_browseable()->get_name()]) ? gettext('yes') : gettext('no'))->
-						insTDwC('lcell' . $dc,isset($sphere->row[$cop->get_guest()->get_name()]) ? gettext('yes') : gettext('no'))->
+						insTDwC('lcell' . $dc,isset($sphere->row[$cop->get_guest()->get_name()]) ? gettext('yes') : gettext('no'));
+				[$status, $detail] = $storage->inspect((string)($sphere->row[$cop->get_path()->get_name()] ?? ''));
+				$cell = $tr->addTDwC('lcell' . $dc);
+				$cell->addElement('strong')->appendChild($document->createTextNode($status));
+				$cell->addDIV()->appendChild($document->createTextNode($detail));
+				$tr->
 						add_toolbox_area()->
 							ins_toolbox($sphere,$is_notprotected,$is_notdirty)->
 							ins_maintainbox($sphere,false)->

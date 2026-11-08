@@ -14990,5 +14990,53 @@ msgstr "潜在活动"
 #~ msgstr "SAMBA"
 
 #: www/login.php
-msgid "Sign in to RidgerLab"
-msgstr "登录 RidgerLab"
+msgid "Sign in to Xigmap"
+msgstr "登录 Xigmap"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Storage check"
+msgstr "存储检查"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Verified"
+msgstr "卷身份已核实"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Volume not mounted"
+msgstr "预期卷未挂载"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Directory missing"
+msgstr "共享目录缺失"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Unverified"
+msgstr "未经核实"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Different mount"
+msgstr "挂载点不符"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Volume mismatch"
+msgstr "卷身份不符"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Actual: %s (%s) at %s"
+msgstr "实际：%s（%s），挂载于 %s"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Expected: %s"
+msgstr "预期：%s"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Check path and traversal permissions."
+msgstr "请检查目录路径和访问权限。"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "Mount information or a static absolute path is unavailable."
+msgstr "无法取得挂载信息或静态绝对路径。"
+
+#: etc/inc/services/samba/share/storage_check.php
+msgid "The backing filesystem could not be resolved."
+msgstr "无法确定实际文件系统。"

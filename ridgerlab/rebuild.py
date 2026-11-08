@@ -1,4 +1,4 @@
-"""Build the RidgerLab Full installer from the modified XigmaNAS r10566 tree.
+"""Build the Xigmap Full installer from the modified XigmaNAS r10566 tree.
 
 Run 'python rebuild.py --help'. The UFS step runs as root on FreeBSD.
 The other steps run on Windows, Linux or FreeBSD (Python 3.11+).
@@ -19,6 +19,13 @@ def stage(archive):
         item=tarfile.TarInfo('share/locale/zh_CN/LC_MESSAGES/xigmanas.mo')
         item.size=len(mo);item.mode=0o644
         out.addfile(item,BytesIO(mo))
+def stage_root(archive):
+    base=Path('etc/inc/services/samba/share')
+    with tarfile.open(archive,'x') as out:
+        for name in ('grid_toolbox.php','storage_check.php'):
+            path=base/name
+            out.add(SOURCE/path,arcname=path.as_posix(),recursive=False)
+
 def extract(official,stage_dir):
     import pycdlib
     with official.open('rb') as fp:
@@ -44,7 +51,7 @@ def image(tree,output,tool):
         target=Path(scratch)/'ridger.iso'
         # A relative output path also works with the Windows Cygwin build.
         argv=[tool,'-quiet','-r','-J','-V','XigmaNAS-x64-LiveCD-14.3.0.5',
-              '-A','RidgerLab Full 1.0','-c','boot.catalog','-b','boot/cdboot',
+              '-A','Xigmap 1.1.0','-c','boot.catalog','-b','boot/cdboot',
               '-no-emul-boot','-boot-load-size','4','-eltorito-alt-boot',
               '-b','boot/efiboot.img','-no-emul-boot','-o',
               os.path.relpath(target,tree).replace(os.sep,'/'),'.']
@@ -75,12 +82,15 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='action',required=True)
     a=sub.add_parser('stage',help='compile the translation catalogue and archive the 5 changed runtime files')
     a.add_argument('overlay',type=Path)
+    a=sub.add_parser('stage-root',help='archive the SMB grid and storage diagnostics for mfsroot.gz')
+    a.add_argument('overlay',type=Path)
     a=sub.add_parser('extract',help='verify the official ISO and extract its Rock Ridge filesystem')
     a.add_argument('official',type=Path);a.add_argument('tree',type=Path)
     a=sub.add_parser('image',help='build BIOS/EFI Full installation media after replacing tree/mdlocal.xz')
     a.add_argument('tree',type=Path);a.add_argument('output',type=Path);a.add_argument('--genisoimage',default='genisoimage')
     args=p.parse_args()
     if args.action=='stage':stage(args.overlay)
+    elif args.action=='stage-root':stage_root(args.overlay)
     elif args.action=='extract':extract(args.official,args.tree)
     else:image(args.tree,args.output,args.genisoimage)
 

@@ -1,0 +1,40 @@
+Building the XigmaNAS r10566 Full installer with SMB Share Check
+================================================================
+Baseline: XigmaNAS 14.3.0.5.10566, SVN trunk at revision 10566.
+Release: https://sourceforge.net/projects/xigmanas/files/XigmaNAS-14.3.0.5/14.3.0.5.10566/
+Project source: https://svn.code.sf.net/p/xigmanas/code/!svn/rvr/10566/trunk/
+License notices: see build/COPYRIGHT and the original source file headers.
+
+Use a clean workspace on the same filesystem as the output. The ISO steps
+require Python 3.11+, pycdlib, polib and genisoimage 1.1.11. The two payload
+steps require FreeBSD with root privileges, PHP CLI, tar, gzip, xz and mdconfig.
+Keep at least 5 GiB of scratch space. A local checkout of this repository is
+referred to below as $SOURCE. Run these commands from a separate build folder.
+
+  python3 "$SOURCE/ridgerlab/rebuild.py" extract /path/to/XigmaNAS-x64-LiveCD-14.3.0.5.10566.iso cdroot
+  python3 "$SOURCE/ridgerlab/rebuild.py" stage local.tar
+  python3 "$SOURCE/ridgerlab/rebuild.py" stage-root root.tar
+
+  sh "$SOURCE/ridgerlab/mkpayload.sh" cdroot/mdlocal.xz local.tar custom-local.xz
+  sh "$SOURCE/ridgerlab/mkpayload.sh" cdroot/mfsroot.gz root.tar custom-root.gz
+  mv custom-local.xz cdroot/mdlocal.xz
+  mv custom-root.gz cdroot/mfsroot.gz
+
+  python3 "$SOURCE/ridgerlab/rebuild.py" image cdroot Xigmap-1.1.0-Full-r10566.iso
+
+For a split-host build, move the two original compressed payloads and the two
+tar overlays to FreeBSD. Return the two rebuilt payloads to cdroot before the
+image step. extract checks the upstream SHA-512. Local staging compiles the
+Simplified Chinese .po into .mo. Root staging supplies the PHP grid and its
+diagnostic class; they live under /etc/inc, outside mdlocal. The UFS step
+checks the PHP syntax of every staged PHP file. The ISO step reconstructs
+the Rock Ridge/Joliet directory tree and BIOS/EFI El Torito catalogue.
+
+Test on PHP 8.4 with gettext:
+  php "$SOURCE/ridgerlab/test_storage_check.php"
+
+Select the Full installer and install to a blank disk, then disconnect the
+ISO and boot from that disk. BIOS/GPT was exercised. The Embedded payload,
+FreeBSD kernel and packaged Samba binaries are inherited from upstream.
+ISO build timestamps may vary. See the release for the digest of the actual
+boot-tested installer, and evidence/ for the SMB read-back measurements.

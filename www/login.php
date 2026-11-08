@@ -220,7 +220,7 @@ $loginpagedata->
 			pop()->
 			addDIV(['class' => 'loginpage-header-logo-right'])->
 				addA(['title' => sprintf('www.%s',get_product_url()),'href' => sprintf('https://www.%s',get_product_url()),'target' => '_blank','rel' => "noreferrer"])->
-					insIMG(['src' => '/images/login_logo.png','alt' => 'RidgerLab NAS'])->
+					insIMG(['src' => '/images/login_logo.png','alt' => 'Xigmap for XigmaNAS'])->
 		pop()->
 		addDIV(['class' => 'loginpage-header-hostname'])->
 			insDIV(['class' => 'loginpage-hostname'],system_get_hostname());
@@ -228,7 +228,7 @@ $loginpagedata->
 	addDIV(['class' => 'loginpage-body'])->
 		insINPUT(['type' => 'text','id' => 'username','class' => 'loginpage-body-item','name' => 'username','placeholder' => gettext('Username'),'autofocus' => 'autofocus','autocomplete' => 'username'])->
 		insINPUT(['type' => 'password','id' => 'password','class' => 'loginpage-body-item','name' => 'password','placeholder' => gettext('Password'),'autocomplete' => 'current-password'])->
-		insINPUT(['type' => 'submit','value' => gettext('Sign in to RidgerLab')]);
+		insINPUT(['type' => 'submit','value' => gettext('Sign in to Xigmap')]);
 $loginpagedata->
 	addElement('footer',['class' => 'loginpage-footer'])->
 		push()->addDIV(['class' => 'loginpage-footer-item'])->
