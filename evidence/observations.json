@@ -1,0 +1,98 @@
+{
+  "upstream": "14.3.0.5.10566",
+  "platform": "x64-full",
+  "installation": "VMware, BIOS/GPT, blank system disk, optical media disconnected for cold boot",
+  "iso_sha256": "51c3a2e0320e41e78dbd504c7e8c9f2efe64c06f54f32ce2ce93ccedd3936e31",
+  "installed_file_sha256": {
+    "/usr/local/www/login.php": "65d65f39c2ff85fa1ab4db69ad3f3733e55c6d8d0fbb50a9b0b3187e0578c10b",
+    "/usr/local/www/index.php": "2d6a098e7858c074db08cb108b09f1c9c1021ee2848dd926af5e0b1d9bbdaf09",
+    "/usr/local/www/favicon.ico": "d0a7e012132b2ea116f0b039e0a53250e1f57ad846cafb051307c655412d7dcc",
+    "/usr/local/www/images/login_logo.png": "20380ceff1bb5d89e5c1b4a8415c6117ff6cee17a5c743334ce895653e584509",
+    "/usr/local/share/locale/zh_CN/LC_MESSAGES/xigmanas.mo": "7a38a5404ad9ef34ccc5c971c28040c78cab50bca684e6cfdf64d1e50b100412",
+    "/etc/inc/services/samba/share/grid_toolbox.php": "7dca2b184dbde06be2a353ebc3404c8907e8937548eeeed9fb74442d0a1cbb21",
+    "/etc/inc/services/samba/share/storage_check.php": "7d3d79dd1249947f4f5fdd1463d6810fd0f4ad43ec2ff2b5a2aac189ced7800a"
+  },
+  "marker_tests": {
+    "Original": {
+      "healthy": {
+        "guest": "Original",
+        "scenario": "healthy",
+        "share": "ShareCheckProbe",
+        "smb_write_read": true,
+        "filesystem": "/dev/md0",
+        "mountpoint": "/mnt/sharecheck-lab",
+        "root_st_dev": "98",
+        "file_st_dev": "83",
+        "sha256": "5dfca2d2e6730a21c0eb9ee2e0ab48b3e58d37dd3919925c4687b15d31b47129"
+      },
+      "fault": {
+        "guest": "Original",
+        "scenario": "fault",
+        "share": "ShareCheckProbe",
+        "smb_write_read": true,
+        "filesystem": "/dev/ufsid/6aef57357d3e0fe4",
+        "mountpoint": "/",
+        "root_st_dev": "98",
+        "file_st_dev": "98",
+        "sha256": "395e9b1910fa7c2db862e043149467f0afc0b0e7ebde261edab20418f0cb4f64"
+      },
+      "restored": {
+        "guest": "Original",
+        "scenario": "restored",
+        "share": "ShareCheckProbe",
+        "smb_write_read": true,
+        "filesystem": "/dev/md0",
+        "mountpoint": "/mnt/sharecheck-lab",
+        "root_st_dev": "98",
+        "file_st_dev": "83",
+        "sha256": "77310ac5f40e06fab953d0a963adc33317b8be0e1070b0fedd035d6691a86430"
+      },
+      "cold": {
+        "healthy": "5dfca2d2e6730a21c0eb9ee2e0ab48b3e58d37dd3919925c4687b15d31b47129",
+        "restored": "77310ac5f40e06fab953d0a963adc33317b8be0e1070b0fedd035d6691a86430",
+        "Demo": "7daca2095d0438260fa849183dfc67faa459fdf4936e1bc91eec6b281b27e4c2"
+      }
+    },
+    "Xigmap": {
+      "healthy": {
+        "guest": "Xigmap",
+        "scenario": "healthy",
+        "share": "ShareCheckProbe",
+        "smb_write_read": true,
+        "filesystem": "/dev/da2",
+        "mountpoint": "/mnt/sharecheck-lab",
+        "root_st_dev": "99",
+        "file_st_dev": "92",
+        "sha256": "e2cdb8fa2b66ca208211c16b1b75d83950c801445caffd235cfdd4b69bfa8a4b"
+      },
+      "fault": {
+        "guest": "Xigmap",
+        "scenario": "fault",
+        "share": "ShareCheckProbe",
+        "smb_write_read": true,
+        "filesystem": "/dev/ufsid/6af0c9534d1da3b7",
+        "mountpoint": "/",
+        "root_st_dev": "99",
+        "file_st_dev": "99",
+        "sha256": "674afb8e880a53a67b9e0698f03152c630ce35345ff708bd44f899cff5da3bdb"
+      },
+      "restored": {
+        "guest": "Xigmap",
+        "scenario": "restored",
+        "share": "ShareCheckProbe",
+        "smb_write_read": true,
+        "filesystem": "/dev/da2",
+        "mountpoint": "/mnt/sharecheck-lab",
+        "root_st_dev": "99",
+        "file_st_dev": "92",
+        "sha256": "94d410c00efbdbf82d4cd378f655fef5db90c3731ef440a8676e84ce08a89e64"
+      },
+      "cold": {
+        "healthy": "e2cdb8fa2b66ca208211c16b1b75d83950c801445caffd235cfdd4b69bfa8a4b",
+        "restored": "94d410c00efbdbf82d4cd378f655fef5db90c3731ef440a8676e84ce08a89e64",
+        "Demo": "7daca2095d0438260fa849183dfc67faa459fdf4936e1bc91eec6b281b27e4c2"
+      }
+    }
+  },
+  "scope": "Each write uses a unique marker. The original fixture used a vnode-backed UFS image and retained the same filesystem when attached as a separate disk for cold boot. The Xigmap fixture was a dedicated 64 MiB virtual disk. Demo is an independent SMB share on a 6 GiB disk."
+}
